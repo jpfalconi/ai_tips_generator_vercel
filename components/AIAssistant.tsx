@@ -18,7 +18,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
 
   const handleGenerate = async () => {
     if (!inputText.trim()) return;
-    
+
     setLoading(true);
     setError('');
 
@@ -32,23 +32,23 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
       }
     } catch (err: any) {
       console.error(err);
-      
+
       let msg = 'Erro desconhecido';
-      
+
       // Try to extract readable message from different error structures
       if (err?.message) {
-         try {
-            // Check if message is a JSON string
-            const parsed = JSON.parse(err.message);
-            if (parsed.error?.message) msg = parsed.error.message;
-            else msg = err.message;
-         } catch {
-            msg = err.message;
-         }
+        try {
+          // Check if message is a JSON string
+          const parsed = JSON.parse(err.message);
+          if (parsed.error?.message) msg = parsed.error.message;
+          else msg = err.message;
+        } catch {
+          msg = err.message;
+        }
       } else if (err?.error?.message) {
-         msg = err.error.message;
+        msg = err.error.message;
       } else {
-         msg = JSON.stringify(err);
+        msg = JSON.stringify(err);
       }
 
       msg = msg.replace(/\[.*?\]\s*/, '').trim();
@@ -61,7 +61,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl border border-white/20 overflow-hidden flex flex-col h-[80vh]">
-        
+
         {/* Header */}
         <div className="bg-falconi-primary p-6 text-white flex justify-between items-start">
           <div>
@@ -73,8 +73,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
               Cole um rascunho, uma ideia ou um texto bruto e deixe a IA estruturar o template Falconi para você.
             </p>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-white/70 hover:text-white p-1 rounded-full hover:bg-white/10 transition"
           >
             <X size={24} />
@@ -85,7 +85,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
         <div className="p-6 flex-1 flex flex-col min-h-0 bg-gray-50">
           <textarea
             className="w-full flex-1 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-falconi-primary focus:border-falconi-primary resize-none text-gray-700 text-sm leading-relaxed mb-4 shadow-inner custom-scrollbar"
-            placeholder="Ex: Crie uma dica sobre o uso do Microsoft Copilot no Excel. Comece falando que ele aumenta a produtividade em 30%. Depois liste 3 benefícios: análise rápida, geração de fórmulas e gráficos automáticos. Por fim, dê um passo a passo de como ativar a aba Dados e digitar o prompt..."
+            placeholder="Ex: Como usar o Copilot no Excel. (A IA irá pesquisar, estruturar um guia completo e gerar imagens automaticamente para você)"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             disabled={loading}
@@ -94,7 +94,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
           <div className="text-right text-xs text-gray-400 mb-2">
             {inputText.length} / 50000 caracteres
           </div>
-          
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-md text-sm flex items-start gap-2 max-h-32 overflow-y-auto">
               <AlertTriangle size={16} className="mt-0.5 flex-shrink-0" />
@@ -118,7 +118,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  Gerando Estrutura...
+                  Gerando e Pesquisando...
                 </>
               ) : (
                 <>

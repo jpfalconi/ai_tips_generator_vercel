@@ -36,7 +36,7 @@ const contentSchema: Schema = {
   required: ["headerTitle", "headerSubtitle", "sections"]
 };
 
-// Function now uses process.env.API_KEY
+// Enhanced function with "Web Search" simulation and Auto-Images
 export const generateBriefingFromText = async (rawText: string): Promise<ContentData | null> => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
@@ -46,40 +46,66 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
   try {
     const ai = new GoogleGenAI({ apiKey });
 
+    // 1. Generate the Structure and Content
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
       contents: `
-        You are a content strategist for Falconi, a leading consulting firm.
-        Analyze the following raw text and structure it into a JSON format suitable for a corporate newsletter/landing page.
+        You are an expert Content Strategist and Researcher for Falconi.
         
-        Rules:
-        1. Identify the main topic and use it for 'headerSubtitle'.
-        2. Create a 'hero' section for the main introduction/highlight. Use 'Falconi AI' tags if relevant.
-        3. If there are lists of benefits, create 'feature' sections. Choose appropriate icons from this list: Zap, BarChart, Shield, Bot, Settings, FileText, Database, Cpu, Lightbulb, Target, Rocket, Users, Clock, CheckCircle, AlertTriangle, Brain, TrendingUp, Globe.
-        4. If there are instructions or "how-to", use 'step' sections. If a prompt is mentioned, put it in 'promptSuggestion'.
-        5. If there are warnings or important notes, use a 'banner' section.
-        6. Keep the tone professional, concise, and action-oriented (Falconi style).
-        7. Use placeholders for images if not specified, but try to use high-quality Unsplash URLs if the context allows estimation.
-        8. Default 'author' to "Falconi Intelligence Unit".
-        9. Default 'readTime' based on content length.
+        GOAL: Transform the user's input (which might be just a topic) into a COMPREHENSIVE, PROFESSIONAL, and ACTIONABLE guide/newsletter.
         
-        Raw Text:
-        ${rawText}
+        INSTRUCTIONS:
+        1. **Research & Expand:** DO NOT just format the input. Validate the topic, "search" your internal knowledge base for best practices, statistics, and actionable steps related to the topic.
+        2. **Structure:**
+           - **Header:** Catchy, professional title.
+           - **Hero Section:** Introduction that hooks the reader, explaining WHY this topic matters now.
+           - **Feature Sections:** 2-3 key benefits, pillars, or statistics. Use diverse icons.
+           - **Step-by-Step:** A detailed, practical "How-To" section. If it's about software, give click-by-click instructions.
+           - **Conclusion/Banner:** A final pro-tip or call to action.
+        3. **Tone:** Falconi (Excellence, Results-Oriented, Data-Driven).
+        4. **Images:** The system will generate images later, so you don't need to provide URLs, but ensure the titles/content are descriptive enough for image generation.
+        
+        USER INPUT:
+        "${rawText}"
+        
+        OUTPUT FORMAT: JSON (strictly following the schema).
       `,
       config: {
         responseMimeType: "application/json",
         responseSchema: contentSchema,
-        temperature: 0.4,
+        temperature: 0.7,
       },
     });
 
     if (response.text) {
       const parsed = JSON.parse(response.text) as ContentData;
-      // Ensure unique IDs
-      parsed.sections = parsed.sections.map((s, i) => ({
-        ...s,
-        id: Date.now().toString() + i
+
+      // 2. Post-Processing: Generate Images and Unique IDs in Parallel
+      const enrichedSections = await Promise.all(parsed.sections.map(async (section, i) => {
+        const uniqueId = Date.now().toString() + i;
+        let imageUrl = section.image;
+
+        // Auto-generate images for Hero, Step, or Image sections if missing
+        if (['hero', 'step', 'image'].includes(section.type) && !imageUrl) {
+          try {
+            // Generate a specific prompt for this section
+            const prompt = await generateImagePrompt(`Title: ${section.title}. Content: ${section.content || ''}`);
+            // Use Pollinations with a seed to ensure stability/variety
+            const seed = Math.floor(Math.random() * 10000);
+            imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&nologo=true`;
+          } catch (err) {
+            console.warn(`Failed to generate image for section ${i}`, err);
+          }
+        }
+
+        return {
+          ...section,
+          id: uniqueId,
+          image: imageUrl
+        };
       }));
+
+      parsed.sections = enrichedSections;
       return parsed;
     }
     return null;

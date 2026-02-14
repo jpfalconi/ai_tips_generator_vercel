@@ -267,48 +267,58 @@ const SectionEditor: React.FC<{
         )}
 
         {/* Fields for Images (Hero, Step, Image) */}
+        {/* Fields for Images (Hero, Step, Image) */}
         {(section.type === 'hero' || section.type === 'step' || section.type === 'image') && (
-          <div className="flex items-center space-x-3 bg-white p-2 border rounded">
-            {section.image && (
-              <div className="relative w-16 h-12 rounded overflow-hidden border">
-                <img src={section.image} alt="Section" className="w-full h-full object-cover" />
-                <button
-                  onClick={() => onUpdate(section.id, 'image', null)}
-                  className="absolute top-0 right-0 bg-red-500 text-white p-0.5"
-                >
-                  <X size={10} />
-                </button>
-              </div>
-            )}
-            <label className="cursor-pointer text-falconi-primary text-xs font-bold hover:underline flex items-center">
-              <ImageIcon size={14} className="mr-1" />
-              {section.image ? 'Trocar Imagem' : 'Adicionar Imagem'}
-              <input type="file" className="hidden" accept="image/*" onChange={(e) => onImageUpload(e, section.id)} />
-            </label>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center space-x-3 bg-white p-2 border rounded">
+              {section.image && (
+                <div className="relative w-16 h-12 rounded overflow-hidden border">
+                  <img src={section.image} alt="Section" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => onUpdate(section.id, 'image', null)}
+                    className="absolute top-0 right-0 bg-red-500 text-white p-0.5"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              )}
+              <label className="cursor-pointer text-falconi-primary text-xs font-bold hover:underline flex items-center">
+                <ImageIcon size={14} className="mr-1" />
+                {section.image ? 'Trocar Imagem' : 'Adicionar Imagem'}
+                <input type="file" className="hidden" accept="image/*" onChange={(e) => onImageUpload(e, section.id)} />
+              </label>
+            </div>
+
+            <ImageSuggester
+              context={`${section.title} ${section.content || ''}`}
+              onSelect={(url) => onUpdate(section.id, 'image', url)}
+            />
           </div>
         )}
 
         {/* Fields for Step */}
-        {section.type === 'step' && (
-          <>
-            <textarea
-              placeholder="Checklist (um item por linha - formato texto simples)..."
-              value={section.listItems || ''}
-              onChange={(e) => onUpdate(section.id, 'listItems', e.target.value)}
-              rows={3}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary focus:outline-none text-sm"
-            />
-            <textarea
-              placeholder="Sugestão de Prompt (aparecerá na caixa de código)..."
-              value={section.promptSuggestion || ''}
-              onChange={(e) => onUpdate(section.id, 'promptSuggestion', e.target.value)}
-              rows={3}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary focus:outline-none text-sm font-mono bg-yellow-50"
-            />
-          </>
-        )}
-      </div>
-    </div>
+        {
+          section.type === 'step' && (
+            <>
+              <textarea
+                placeholder="Checklist (um item por linha - formato texto simples)..."
+                value={section.listItems || ''}
+                onChange={(e) => onUpdate(section.id, 'listItems', e.target.value)}
+                rows={3}
+                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary focus:outline-none text-sm"
+              />
+              <textarea
+                placeholder="Sugestão de Prompt (aparecerá na caixa de código)..."
+                value={section.promptSuggestion || ''}
+                onChange={(e) => onUpdate(section.id, 'promptSuggestion', e.target.value)}
+                rows={3}
+                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary focus:outline-none text-sm font-mono bg-yellow-50"
+              />
+            </>
+          )
+        }
+      </div >
+    </div >
   );
 };
 
