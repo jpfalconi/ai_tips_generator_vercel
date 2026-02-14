@@ -64,6 +64,11 @@ Centralizar e agilizar a produção de "Dicas de IA", permitindo que o time de c
 
 ## 📅 ChangeLog
 
+### [2026-02-14] - v1.2.0 - UX & SharePoint Update
+- **UX:** Sidebar do editor agora é redimensionável (arrastável).
+- **SharePoint:** Suporte completo para seções avançadas (Citação, Estatística, Código, Comparativo) no arquivo .aspx.
+- **Fix:** Remoção de overlays indesejados no Preview Web.
+
 ### [2026-02-14] - v1.1.1 - Ajustes de Compatibilidade Outlook
 - **Email Engine:** Refatoração completa para uso de tabelas HTML (Outlook Support).
 - **Styles:** Ajustes de espaçamento em Banners e tamanho de botões.
