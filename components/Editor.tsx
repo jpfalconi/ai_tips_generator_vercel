@@ -91,7 +91,8 @@ const ImageSuggester = ({ context, onSelect }: { context: string, onSelect: (url
       const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&nologo=true`;
       onSelect(imageUrl);
     } catch (error) {
-      alert("Erro ao gerar sugestão. Verifique sua chave API.");
+      console.error("Error generating image suggestion:", error);
+      alert("Erro ao gerar sugestão. Verifique o console para mais detalhes ou tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -101,10 +102,10 @@ const ImageSuggester = ({ context, onSelect }: { context: string, onSelect: (url
     <button
       onClick={handleSuggest}
       disabled={loading}
-      className="flex items-center justify-center gap-2 text-xs font-bold text-falconi-secondary bg-falconi-primary/10 hover:bg-falconi-primary/20 p-2 rounded border border-falconi-secondary/30 transition-colors w-full"
+      className="flex items-center justify-center gap-2 text-xs font-bold text-white bg-falconi-primary hover:bg-falconi-primary/90 p-3 rounded shadow-sm transition-all w-full mt-2"
     >
       {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-      {loading ? "Criando..." : "Sugerir Imagem com IA"}
+      {loading ? "Criando Imagem..." : "✨ Sugerir Imagem com IA"}
     </button>
   );
 };
