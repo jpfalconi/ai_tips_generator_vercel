@@ -113,7 +113,7 @@ const renderBanner = (section: Section) => `
              !
            </div>
         </td>
-        <td style="padding: 25px 25px 25px 15px; color: #ffffff; font-family: Arial, sans-serif;">
+        <td style="padding: 25px 25px 25px 25px; color: #ffffff; font-family: Arial, sans-serif;">
            <h3 style="margin: 0 0 5px 0; font-size: 18px; font-weight: bold; color: #ffffff;">${section.title}</h3>
            <div style="margin: 0; font-size: 15px; opacity: 0.9; line-height: 1.5; color: #ffffff;">${formatText(section.content)}</div>
         </td>
@@ -350,7 +350,7 @@ export const generateEmailHTML = (data: ContentData): string => {
               <p style="font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: ${COLORS.primary}; margin-bottom: 35px;">
                  ${author}
               </p>
-              <a href="${footerCtaLink}" style="background-color: ${COLORS.primary}; color: #ffffff; padding: 16px 36px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block;">
+              <a href="${footerCtaLink}" style="background-color: ${COLORS.primary}; color: #ffffff; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">
                 ${footerCtaText}
               </a>
               
@@ -360,14 +360,14 @@ export const generateEmailHTML = (data: ContentData): string => {
               </p>
             </td>
           </tr>
-
-        </table>
-      </td>
-    </tr>
+`;
   </table>
-</body>
-</html>
-  `;
+    </td>
+    </tr>
+    </table>
+    </body>
+    </html>
+      `;
 };
 
 /**
@@ -379,10 +379,10 @@ export const generateEML = (data: ContentData): string => {
 
   // The 'X-Unsent: 1' header tells Outlook to open this as a Draft (Compose mode)
   // instead of a received message.
-  return `To: 
-Subject: ${data.headerSubtitle}
-X-Unsent: 1
-Content-Type: text/html; charset="utf-8"
+  return `To:
+  Subject: ${ data.headerSubtitle }
+  X - Unsent: 1
+  Content - Type: text / html; charset = "utf-8"
 
-${html}`;
+${ html } `;
 };
