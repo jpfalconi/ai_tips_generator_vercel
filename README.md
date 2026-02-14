@@ -64,6 +64,11 @@ Centralizar e agilizar a produção de "Dicas de IA", permitindo que o time de c
 
 ## 📅 ChangeLog
 
+### [2026-02-14] - v1.1.1 - Ajustes de Compatibilidade Outlook
+- **Email Engine:** Refatoração completa para uso de tabelas HTML (Outlook Support).
+- **Styles:** Ajustes de espaçamento em Banners e tamanho de botões.
+- **Fix:** Correção de headers EML para renderização HTML adequada.
+
 ### [2026-02-14] - v1.1.0 - Implementação de Segurança
 - **Segurança:** Adicionada tela de login com proteção por senha.
 - **Criptografia:** Implementação de hash SHA-256 no client-side para validação de acesso.
