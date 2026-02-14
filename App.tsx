@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DEFAULT_DATA, PASSWORD_HASH } from './constants';
 import { ContentData, ViewMode } from './types';
 import Editor from './components/Editor';
@@ -84,6 +84,40 @@ const App: React.FC = () => {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
   }
 
+  // Sidebar Resize State
+  const [sidebarWidth, setSidebarWidth] = useState(450);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const startResizing = React.useCallback(() => {
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = React.useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = React.useCallback(
+    (mouseMoveEvent: MouseEvent) => {
+      if (isResizing) {
+        const newWidth = mouseMoveEvent.clientX;
+        if (newWidth > 300 && newWidth < 800) { // Min and Max width constraints
+          setSidebarWidth(newWidth);
+        }
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
+
   return (
     <div className="flex h-screen bg-falconi-gray overflow-hidden font-sans">
 
@@ -95,7 +129,21 @@ const App: React.FC = () => {
       />
 
       {/* Sidebar / Editor */}
-      <aside className="w-full md:w-[450px] flex flex-col bg-white border-r border-gray-200 shadow-xl z-10">
+      <aside
+        ref={sidebarRef}
+        className="relative flex flex-col bg-white border-r border-gray-200 shadow-xl z-10 flex-shrink-0 transition-all duration-75 ease-out"
+        style={{ width: sidebarWidth }}
+      >
+        {/* Drag Handle */}
+        <div
+          className="absolute right-0 top-0 bottom-0 w-1 bg-transparent hover:bg-falconi-primary/50 cursor-col-resize z-50 transition-colors"
+          onMouseDown={startResizing}
+          title="Arraste para redimensionar"
+        >
+          {/* Visual indicator when hovering or resizing */}
+          <div className={`h-full w-full ${isResizing ? 'bg-falconi-primary' : ''}`} />
+        </div>
+
         <div className="p-4 bg-falconi-primary text-white flex items-center justify-between shadow-md">
           <div className="flex items-center gap-2">
             <Layout className="text-falconi-secondary" />
