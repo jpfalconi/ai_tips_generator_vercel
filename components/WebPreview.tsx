@@ -38,10 +38,7 @@ const HeroSection: React.FC<{ section: Section }> = ({ section }) => {
               e.currentTarget.onerror = null;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-falconi-primary/60 via-transparent to-transparent"></div>
-          <div className="absolute bottom-4 left-6 text-white text-2xl font-bold uppercase tracking-wider opacity-80 text-shadow-sm">
-            Falconi AI
-          </div>
+
         </div>
       )}
       <div className="p-8">
