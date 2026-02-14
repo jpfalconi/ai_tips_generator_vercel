@@ -469,7 +469,7 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
     handleChange('sections', newSections);
   };
 
-  const addSection = () => {
+  const addSection = (index?: number) => {
     const newSection: Section = {
       id: Date.now().toString(),
       type: 'step',
@@ -477,7 +477,14 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
       content: '',
       image: null
     };
-    handleChange('sections', [...data.sections, newSection]);
+
+    if (index !== undefined) {
+      const newSections = [...data.sections];
+      newSections.splice(index, 0, newSection);
+      handleChange('sections', newSections);
+    } else {
+      handleChange('sections', [...data.sections, newSection]);
+    }
   };
 
   const removeSection = (id: string) => {
@@ -554,25 +561,35 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
 
         <div className="space-y-6">
           {data.sections.map((section, index) => (
-            <SectionEditor
-              key={section.id}
-              section={section}
-              index={index}
-              total={data.sections.length}
-              onUpdate={handleSectionChange}
-              onRemove={removeSection}
-              onMove={moveSection}
-              onImageUpload={handleImageUpload}
-            />
+            <React.Fragment key={section.id}>
+              <SectionEditor
+                section={section}
+                index={index}
+                total={data.sections.length}
+                onUpdate={handleSectionChange}
+                onRemove={removeSection}
+                onMove={moveSection}
+                onImageUpload={handleImageUpload}
+              />
+              {/* Insert Button Between Sections */}
+              <div className="relative group h-4 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-opacity"
+                onClick={() => addSection(index + 1)}
+                title="Inserir Nova Seção Aqui">
+                <div className="absolute w-full h-px bg-falconi-primary/50"></div>
+                <div className="z-10 bg-white border border-falconi-primary text-falconi-primary rounded-full p-1 shadow-sm transform scale-75 group-hover:scale-100 transition-transform">
+                  <Plus size={16} />
+                </div>
+              </div>
+            </React.Fragment>
           ))}
         </div>
 
         <button
-          onClick={addSection}
-          className="mt-6 w-full py-3 bg-falconi-gray text-falconi-primary font-bold rounded border-2 border-dashed border-falconi-primary hover:bg-falconi-secondary hover:border-solid transition flex items-center justify-center"
+          onClick={() => addSection()}
+          className="mt-2 w-full py-3 bg-falconi-gray text-falconi-primary font-bold rounded border-2 border-dashed border-falconi-primary hover:bg-falconi-secondary hover:border-solid transition flex items-center justify-center"
         >
           <Plus size={20} className="mr-2" />
-          Adicionar Nova Seção
+          Adicionar Nova Seção (Final)
         </button>
       </div>
 
