@@ -95,4 +95,5 @@ export const ICONS_MAP: Record<string, string> = {
   Globe: 'Global / Mundo'
 };
 
-export const ICONS_LIST = Object.keys(ICONS_MAP);
+
+export const PASSWORD_HASH = 'bf529b806490e42bd0c87ca5e97735938fd82b3e5c57bb924e41e2324984469c';

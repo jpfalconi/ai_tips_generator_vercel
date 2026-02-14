@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
-import { DEFAULT_DATA } from './constants';
+import React, { useState, useEffect } from 'react';
+import { DEFAULT_DATA, PASSWORD_HASH } from './constants';
 import { ContentData, ViewMode } from './types';
 import Editor from './components/Editor';
 import WebPreview from './components/WebPreview';
 import EmailPreview from './components/EmailPreview';
 import AIAssistant from './components/AIAssistant';
+import Login from './components/Login';
 import { Layout, Mail, Globe, Code, Copy, Check, Download, AppWindow, Sparkles, ChevronsUpDown } from 'lucide-react';
 import { generateEmailHTML, generateEML } from './services/emailGenerator';
 import { generateSharePointHTML } from './services/sharepointGenerator';
 
 const App: React.FC = () => {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
+
   // App State
   const [data, setData] = useState<ContentData>(DEFAULT_DATA);
   const [activeView, setActiveView] = useState<ViewMode>('web-preview');
   const [copied, setCopied] = useState(false);
   const [isAIMode, setIsAIMode] = useState(false);
-  
+
   // SharePoint Helper State
   const [sharepointLink, setSharepointLink] = useState('');
   const [iframeHeight, setIframeHeight] = useState(2500);
+
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (token === PASSWORD_HASH) {
+      setIsAuthenticated(true);
+    }
+    setAuthChecking(false);
+  }, []);
 
   const copyCode = (content: string) => {
     navigator.clipboard.writeText(content).then(() => {
@@ -28,7 +41,7 @@ const App: React.FC = () => {
   };
 
   const copyEmailHTML = () => {
-     copyCode(generateEmailHTML(data));
+    copyCode(generateEmailHTML(data));
   };
 
   const downloadEML = () => {
@@ -59,17 +72,25 @@ const App: React.FC = () => {
   };
 
   const getIframeCode = () => {
-     const src = sharepointLink.trim() || 'COLE_SEU_LINK_AQUI';
-     return `<iframe src="${src}" width="100%" height="${iframeHeight}" frameborder="0" scrolling="no" style="border:none;"></iframe>`;
+    const src = sharepointLink.trim() || 'COLE_SEU_LINK_AQUI';
+    return `<iframe src="${src}" width="100%" height="${iframeHeight}" frameborder="0" scrolling="no" style="border:none;"></iframe>`;
   };
+
+  if (authChecking) {
+    return <div className="flex h-screen items-center justify-center bg-gray-100"></div>; // Or a loading spinner
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className="flex h-screen bg-falconi-gray overflow-hidden font-sans">
-      
+
       {/* AI Assistant Modal */}
-      <AIAssistant 
-        isOpen={isAIMode} 
-        onClose={() => setIsAIMode(false)} 
+      <AIAssistant
+        isOpen={isAIMode}
+        onClose={() => setIsAIMode(false)}
         onGenerate={(newData) => setData(newData)}
       />
 
@@ -84,16 +105,16 @@ const App: React.FC = () => {
 
         {/* AI Trigger Area */}
         <div className="p-4 border-b border-gray-100 bg-gray-50/50">
-           <button 
-             onClick={() => setIsAIMode(true)}
-             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-falconi-primary to-falconi-primary/80 text-white p-3 rounded-lg font-bold shadow-sm hover:shadow-md transition-all hover:scale-[1.01] group"
-           >
-             <Sparkles size={18} className="text-falconi-secondary group-hover:animate-spin-slow" fill="currentColor" />
-             Criar com Assistente IA
-           </button>
-           <p className="text-[10px] text-center text-gray-400 mt-2">
-             Gere um briefing completo a partir de um texto simples.
-           </p>
+          <button
+            onClick={() => setIsAIMode(true)}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-falconi-primary to-falconi-primary/80 text-white p-3 rounded-lg font-bold shadow-sm hover:shadow-md transition-all hover:scale-[1.01] group"
+          >
+            <Sparkles size={18} className="text-falconi-secondary group-hover:animate-spin-slow" fill="currentColor" />
+            Criar com Assistente IA
+          </button>
+          <p className="text-[10px] text-center text-gray-400 mt-2">
+            Gere um briefing completo a partir de um texto simples.
+          </p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
@@ -107,34 +128,34 @@ const App: React.FC = () => {
         <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-0 overflow-x-auto">
           <div className="flex items-center gap-4">
             <div className="flex bg-gray-100 p-1 rounded-lg">
-               <button
-                 onClick={() => setActiveView('web-preview')}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'web-preview' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-               >
-                 <Globe size={16} /> Web
-               </button>
-               <button
-                 onClick={() => setActiveView('email-preview')}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'email-preview' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-               >
-                 <Mail size={16} /> Outlook
-               </button>
-               <button
-                 onClick={() => setActiveView('sharepoint')}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'sharepoint' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-               >
-                 <AppWindow size={16} /> SharePoint
-               </button>
-               <button
-                 onClick={() => setActiveView('export')}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'export' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-               >
-                 <Code size={16} /> Obter Código
-               </button>
+              <button
+                onClick={() => setActiveView('web-preview')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'web-preview' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <Globe size={16} /> Web
+              </button>
+              <button
+                onClick={() => setActiveView('email-preview')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'email-preview' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <Mail size={16} /> Outlook
+              </button>
+              <button
+                onClick={() => setActiveView('sharepoint')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'sharepoint' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <AppWindow size={16} /> SharePoint
+              </button>
+              <button
+                onClick={() => setActiveView('export')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'export' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <Code size={16} /> Obter Código
+              </button>
             </div>
-            
+
             {activeView === 'email-preview' && (
-              <button 
+              <button
                 onClick={downloadEML}
                 className="flex items-center gap-2 px-4 py-2 bg-falconi-secondary text-falconi-primary rounded-md text-sm font-bold hover:bg-opacity-90 transition shadow-sm animate-in fade-in whitespace-nowrap"
               >
@@ -148,128 +169,128 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-y-auto relative bg-gray-100">
           {activeView === 'web-preview' && <WebPreview data={data} />}
           {activeView === 'email-preview' && <EmailPreview data={data} />}
-          
+
           {activeView === 'sharepoint' && (
-             <div className="p-8 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-                {/* Instructions Column */}
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 flex flex-col">
-                   <h2 className="text-2xl font-bold text-falconi-primary mb-6 flex items-center gap-2">
-                     <AppWindow /> Assistente de Publicação
-                   </h2>
-                   
-                   <div className="space-y-8 text-gray-600 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                      
-                      {/* Step 1 */}
-                      <div className="relative pl-8 border-l-2 border-falconi-gray">
-                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-falconi-secondary border-2 border-white"></div>
-                         <h3 className="font-bold text-gray-800 mb-2">1. Baixe o Arquivo .aspx</h3>
-                         <p className="text-sm mb-3">O código foi corrigido para evitar erros de acentuação (UTF-8).</p>
-                         <button 
-                            onClick={downloadASPX}
-                            className="flex items-center gap-2 px-4 py-2 bg-falconi-primary text-white rounded-md text-sm font-bold hover:bg-opacity-90 transition shadow-sm"
-                          >
-                            <Download size={16} /> Baixar Arquivo .aspx
-                          </button>
-                      </div>
+            <div className="p-8 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
+              {/* Instructions Column */}
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 flex flex-col">
+                <h2 className="text-2xl font-bold text-falconi-primary mb-6 flex items-center gap-2">
+                  <AppWindow /> Assistente de Publicação
+                </h2>
 
-                      {/* Step 2 */}
-                      <div className="relative pl-8 border-l-2 border-falconi-gray">
-                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
-                         <h3 className="font-bold text-gray-800 mb-2">2. Faça Upload no SharePoint</h3>
-                         <p className="text-sm mb-2">Suba o arquivo na biblioteca "Documentos" do site e copie o link direto dele.</p>
-                      </div>
+                <div className="space-y-8 text-gray-600 flex-1 overflow-y-auto pr-2 custom-scrollbar">
 
-                      {/* Step 3 */}
-                      <div className="relative pl-8 border-l-2 border-falconi-gray">
-                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
-                         <h3 className="font-bold text-gray-800 mb-2">3. Cole o Link Direto</h3>
-                         <input 
-                           type="text" 
-                           placeholder="https://..." 
-                           value={sharepointLink}
-                           onChange={(e) => setSharepointLink(e.target.value)}
-                           className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary text-sm font-mono"
-                         />
-                      </div>
+                  {/* Step 1 */}
+                  <div className="relative pl-8 border-l-2 border-falconi-gray">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-falconi-secondary border-2 border-white"></div>
+                    <h3 className="font-bold text-gray-800 mb-2">1. Baixe o Arquivo .aspx</h3>
+                    <p className="text-sm mb-3">O código foi corrigido para evitar erros de acentuação (UTF-8).</p>
+                    <button
+                      onClick={downloadASPX}
+                      className="flex items-center gap-2 px-4 py-2 bg-falconi-primary text-white rounded-md text-sm font-bold hover:bg-opacity-90 transition shadow-sm"
+                    >
+                      <Download size={16} /> Baixar Arquivo .aspx
+                    </button>
+                  </div>
 
-                      {/* Step 4 */}
-                      <div className="relative pl-8 border-l-2 border-transparent">
-                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
-                         <h3 className="font-bold text-gray-800 mb-2">4. Ajuste e Copie o Código</h3>
-                         <p className="text-sm mb-3">Ajuste a altura para remover a barra de rolagem.</p>
-                         
-                         <div className="flex items-center gap-4 mb-4 bg-gray-50 p-3 rounded border border-gray-200">
-                            <label className="text-sm font-bold text-gray-600 flex items-center gap-2">
-                               <ChevronsUpDown size={16} /> Altura (px):
-                            </label>
-                            <input 
-                                type="number" 
-                                value={iframeHeight}
-                                onChange={(e) => setIframeHeight(Number(e.target.value))}
-                                className="w-24 p-1 border border-gray-300 rounded text-center font-mono"
-                            />
-                            <span className="text-xs text-gray-500">Aumente se aparecer rolagem</span>
-                         </div>
-                      </div>
+                  {/* Step 2 */}
+                  <div className="relative pl-8 border-l-2 border-falconi-gray">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
+                    <h3 className="font-bold text-gray-800 mb-2">2. Faça Upload no SharePoint</h3>
+                    <p className="text-sm mb-2">Suba o arquivo na biblioteca "Documentos" do site e copie o link direto dele.</p>
+                  </div>
 
-                   </div>
+                  {/* Step 3 */}
+                  <div className="relative pl-8 border-l-2 border-falconi-gray">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
+                    <h3 className="font-bold text-gray-800 mb-2">3. Cole o Link Direto</h3>
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      value={sharepointLink}
+                      onChange={(e) => setSharepointLink(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-falconi-primary text-sm font-mono"
+                    />
+                  </div>
+
+                  {/* Step 4 */}
+                  <div className="relative pl-8 border-l-2 border-transparent">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-300 border-2 border-white"></div>
+                    <h3 className="font-bold text-gray-800 mb-2">4. Ajuste e Copie o Código</h3>
+                    <p className="text-sm mb-3">Ajuste a altura para remover a barra de rolagem.</p>
+
+                    <div className="flex items-center gap-4 mb-4 bg-gray-50 p-3 rounded border border-gray-200">
+                      <label className="text-sm font-bold text-gray-600 flex items-center gap-2">
+                        <ChevronsUpDown size={16} /> Altura (px):
+                      </label>
+                      <input
+                        type="number"
+                        value={iframeHeight}
+                        onChange={(e) => setIframeHeight(Number(e.target.value))}
+                        className="w-24 p-1 border border-gray-300 rounded text-center font-mono"
+                      />
+                      <span className="text-xs text-gray-500">Aumente se aparecer rolagem</span>
+                    </div>
+                  </div>
+
                 </div>
+              </div>
 
-                {/* Code Column */}
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-[600px] lg:h-auto">
-                   <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                      <h3 className="font-bold text-gray-700">Código de Inserção</h3>
-                      <button 
-                        onClick={() => copyCode(getIframeCode())}
-                        className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-bold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-falconi-primary text-white hover:bg-opacity-90'}`}
-                      >
-                        {copied ? <Check size={16} /> : <Copy size={16} />}
-                        {copied ? 'Copiado!' : 'Copiar'}
-                      </button>
-                   </div>
-                   <div className="flex-1 bg-gray-900 p-4 overflow-auto custom-scrollbar relative">
-                      <div className="text-gray-400 text-xs mb-2 font-sans border-b border-gray-700 pb-2">
-                         Cole na Web Part "Inserir" (&lt;/&gt;):
-                      </div>
-                      <code className="text-green-400 text-sm font-mono whitespace-pre-wrap break-all block">
-                        {getIframeCode()}
-                      </code>
-                   </div>
+              {/* Code Column */}
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-[600px] lg:h-auto">
+                <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                  <h3 className="font-bold text-gray-700">Código de Inserção</h3>
+                  <button
+                    onClick={() => copyCode(getIframeCode())}
+                    className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-bold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-falconi-primary text-white hover:bg-opacity-90'}`}
+                  >
+                    {copied ? <Check size={16} /> : <Copy size={16} />}
+                    {copied ? 'Copiado!' : 'Copiar'}
+                  </button>
                 </div>
-             </div>
+                <div className="flex-1 bg-gray-900 p-4 overflow-auto custom-scrollbar relative">
+                  <div className="text-gray-400 text-xs mb-2 font-sans border-b border-gray-700 pb-2">
+                    Cole na Web Part "Inserir" (&lt;/&gt;):
+                  </div>
+                  <code className="text-green-400 text-sm font-mono whitespace-pre-wrap break-all block">
+                    {getIframeCode()}
+                  </code>
+                </div>
+              </div>
+            </div>
           )}
 
           {activeView === 'export' && (
-             <div className="p-8 max-w-4xl mx-auto">
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-                   <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                      <h3 className="font-bold text-gray-700">HTML para E-mail Marketing</h3>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={downloadEML}
-                          className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold bg-falconi-secondary text-falconi-primary hover:bg-opacity-90"
-                        >
-                          <Download size={16} /> Baixar .eml
-                        </button>
-                        <button 
-                          onClick={copyEmailHTML}
-                          className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-bold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-falconi-primary text-white hover:bg-opacity-90'}`}
-                        >
-                          {copied ? <Check size={16} /> : <Copy size={16} />}
-                          {copied ? 'Copiado!' : 'Copiar HTML'}
-                        </button>
-                      </div>
-                   </div>
-                   <div className="p-6 bg-yellow-50 border-b border-yellow-100 text-yellow-800 text-sm">
-                      <strong>Atenção:</strong> Para E-mail Marketing, lembre-se de hospedar as imagens em um servidor público.
-                   </div>
-                   <div className="p-4 bg-gray-900 overflow-auto h-[500px]">
-                      <code className="text-green-400 text-xs font-mono whitespace-pre">
-                        {generateEmailHTML(data)}
-                      </code>
-                   </div>
+            <div className="p-8 max-w-4xl mx-auto">
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                  <h3 className="font-bold text-gray-700">HTML para E-mail Marketing</h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={downloadEML}
+                      className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold bg-falconi-secondary text-falconi-primary hover:bg-opacity-90"
+                    >
+                      <Download size={16} /> Baixar .eml
+                    </button>
+                    <button
+                      onClick={copyEmailHTML}
+                      className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-bold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-falconi-primary text-white hover:bg-opacity-90'}`}
+                    >
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                      {copied ? 'Copiado!' : 'Copiar HTML'}
+                    </button>
+                  </div>
                 </div>
-             </div>
+                <div className="p-6 bg-yellow-50 border-b border-yellow-100 text-yellow-800 text-sm">
+                  <strong>Atenção:</strong> Para E-mail Marketing, lembre-se de hospedar as imagens em um servidor público.
+                </div>
+                <div className="p-4 bg-gray-900 overflow-auto h-[500px]">
+                  <code className="text-green-400 text-xs font-mono whitespace-pre">
+                    {generateEmailHTML(data)}
+                  </code>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </main>
