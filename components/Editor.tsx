@@ -198,22 +198,29 @@ const SectionEditor: React.FC<{
         {/* Fields specific to Feature */}
         {section.type === 'feature' && (
           <div className="flex flex-col gap-2">
+            <select
+              value={section.icon || ''}
+              onChange={(e) => onUpdate(section.id, 'icon', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm mb-2"
+            >
+              <option value="">Selecione um Ícone</option>
+              {Object.entries(ICONS_MAP).map(([icon, label]) => (
+                <option key={icon} value={icon}>{label}</option>
+              ))}
+            </select>
             <div className="grid grid-cols-2 gap-2">
-              <select
-                value={section.icon || ''}
-                onChange={(e) => onUpdate(section.id, 'icon', e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded text-sm"
-              >
-                <option value="">Selecione um Ícone</option>
-                {Object.entries(ICONS_MAP).map(([icon, label]) => (
-                  <option key={icon} value={icon}>{label}</option>
-                ))}
-              </select>
               <input
                 type="text"
                 placeholder="Texto Link (Opcional)"
                 value={section.ctaText || ''}
                 onChange={(e) => onUpdate(section.id, 'ctaText', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded text-sm"
+              />
+              <input
+                type="text"
+                placeholder="URL do Link (https://...)"
+                value={section.ctaLink || ''}
+                onChange={(e) => onUpdate(section.id, 'ctaLink', e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded text-sm"
               />
             </div>
