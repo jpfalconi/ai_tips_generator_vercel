@@ -27,16 +27,16 @@ const formatText = (text: string) => {
   // The rich editor returns HTML. We don't need to replace newlines.
   // We just ensure lists have inline styles for SharePoint/Email compatibility.
   let formatted = text;
-  
+
   formatted = formatted.replace(
-      /<ul>/g, 
-      `<ul style="margin: 0 0 10px 0; padding-left: 20px; list-style-type: disc;">`
+    /<ul>/g,
+    `<ul style="margin: 0 0 10px 0; padding-left: 20px; list-style-type: disc;">`
   );
   formatted = formatted.replace(
-      /<li>/g, 
-      `<li style="margin-bottom: 5px;">`
+    /<li>/g,
+    `<li style="margin-bottom: 5px;">`
   );
-  
+
   return formatted;
 };
 
@@ -47,8 +47,8 @@ const getIcon = (name?: string, color: string = 'currentColor') => {
 };
 
 const renderTags = (tags?: string) => {
-    if (!tags) return '';
-    return tags.split(',').map((tag, i) => `
+  if (!tags) return '';
+  return tags.split(',').map((tag, i) => `
         <span style="display:inline-block; font-size:11px; font-weight:bold; text-transform:uppercase; padding:4px 8px; border-radius:2px; margin-right:4px; margin-bottom: 4px; background-color: ${i === 1 ? COLORS.secondary : COLORS.primary}; color: ${i === 1 ? COLORS.primary : COLORS.white};">
             ${tag.trim()}
         </span>
@@ -76,13 +76,13 @@ const renderHero = (section: Section) => `
 `;
 
 const renderImageSection = (section: Section) => {
-    if (!section.image) return '';
+  if (!section.image) return '';
 
-    let maxWidth = '100%';
-    if (section.imageSize === 'small') maxWidth = '300px';
-    if (section.imageSize === 'medium') maxWidth = '500px';
+  let maxWidth = '100%';
+  if (section.imageSize === 'small') maxWidth = '300px';
+  if (section.imageSize === 'medium') maxWidth = '500px';
 
-    return `
+  return `
     <div style="text-align: center; margin-bottom: 30px;">
        <img src="${section.image}" style="max-width: ${maxWidth}; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" alt="${section.title}" />
        ${section.title ? `<div style="font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #888; font-style: italic; margin-top: 5px;">${section.title}</div>` : ''}
@@ -157,34 +157,108 @@ const renderStep = (section: Section) => `
 </div>
 `;
 
+const renderQuote = (section: Section) => `
+<div style="background-color: #f9f9f9; border-left: 5px solid ${COLORS.secondary}; padding: 24px; margin-bottom: 24px; border-radius: 0 4px 4px 0;">
+    <div style="font-size: 32px; line-height: 1; color: #dddddd; font-family: Georgia, serif; margin-bottom: 8px;">“</div>
+    <div style="font-size: 18px; font-style: italic; color: #333333; line-height: 1.6; font-family: Georgia, serif; margin-bottom: 16px;">${formatText(section.content)}</div>
+    ${section.author ? `
+      <div style="display: flex; align-items: center; gap: 12px;">
+         <div style="height: 1px; width: 30px; background-color: ${COLORS.primary};"></div>
+         <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: ${COLORS.primary}; font-family: 'Segoe UI', sans-serif;">${section.author}</div>
+      </div>
+    ` : ''}
+</div>
+`;
+
+const renderStat = (section: Section) => `
+<div style="background-color: ${COLORS.primary}; color: #ffffff; padding: 32px; border-radius: 4px; text-align: center; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+    <div style="font-size: 56px; font-weight: bold; line-height: 1; margin-bottom: 8px; color: ${COLORS.secondary}; font-family: 'Segoe UI', sans-serif;">${section.statValue}</div>
+    ${section.statLabel ? `<div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; opacity: 0.95; font-family: 'Segoe UI', sans-serif;">${section.statLabel}</div>` : ''}
+    ${section.content ? `<div style="font-size: 14px; opacity: 0.85; max-width: 500px; margin: 0 auto; line-height: 1.5; font-family: 'Segoe UI', sans-serif;">${formatText(section.content)}</div>` : ''}
+</div>
+`;
+
+const renderCode = (section: Section) => `
+<div style="background-color: #1e1e1e; border-radius: 4px; padding: 20px; margin-bottom: 24px; border: 1px solid #333;">
+    ${section.title ? `<div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: ${COLORS.secondary}; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px; border-bottom: 1px solid #333; padding-bottom: 8px;">${section.title}</div>` : ''}
+    <div style="font-family: Consolas, 'Courier New', monospace; font-size: 13px; color: #d4d4d4; line-height: 1.6; white-space: pre-wrap; overflow-x: auto;">${section.content}</div>
+</div>
+`;
+
+const renderComparison = (section: Section) => {
+  const pros = section.prosList ? section.prosList.split('\n') : [];
+  const cons = section.consList ? section.consList.split('\n') : [];
+
+  return `
+  <div style="margin-bottom: 24px;">
+    ${section.title ? `<h3 style="text-align: center; margin: 0 0 20px 0; font-size: 20px; font-family: 'Segoe UI Semibold', sans-serif; color: #333;">${section.title}</h3>` : ''}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      
+      <!-- Pros -->
+      <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 20px;">
+         <div style="font-weight: bold; color: #15803d; margin-bottom: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+           <span>✔</span> PRÓS
+         </div>
+         <ul style="list-style: none; padding: 0; margin: 0;">
+            ${pros.map(item => `
+              <li style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; color: #333; font-size: 13px; font-family: 'Segoe UI', sans-serif;">
+                <span style="color: #15803d;">●</span> ${item}
+              </li>
+            `).join('')}
+         </ul>
+      </div>
+
+      <!-- Cons -->
+      <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; padding: 20px;">
+         <div style="font-weight: bold; color: #b91c1c; margin-bottom: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #fecaca; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+           <span>✖</span> CONTRAS
+         </div>
+         <ul style="list-style: none; padding: 0; margin: 0;">
+            ${cons.map(item => `
+              <li style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; color: #333; font-size: 13px; font-family: 'Segoe UI', sans-serif;">
+                <span style="color: #b91c1c;">●</span> ${item}
+              </li>
+            `).join('')}
+         </ul>
+      </div>
+
+    </div>
+  </div>
+  `;
+};
+
 export const generateSharePointHTML = (data: ContentData): string => {
   const { headerTitle, headerSubtitle, author, footerCtaText, footerCtaLink, sections } = data;
 
   let contentHtml = '';
-  
+
   let featuresBuffer: Section[] = [];
 
   const flushFeatures = () => {
-      if (featuresBuffer.length > 0) {
-          contentHtml += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px;">`;
-          featuresBuffer.forEach(f => {
-              contentHtml += renderFeature(f);
-          });
-          contentHtml += `</div>`;
-          featuresBuffer = [];
-      }
+    if (featuresBuffer.length > 0) {
+      contentHtml += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px;">`;
+      featuresBuffer.forEach(f => {
+        contentHtml += renderFeature(f);
+      });
+      contentHtml += `</div>`;
+      featuresBuffer = [];
+    }
   };
 
   sections.forEach(section => {
-      if (section.type === 'feature') {
-          featuresBuffer.push(section);
-      } else {
-          flushFeatures();
-          if (section.type === 'hero') contentHtml += renderHero(section);
-          if (section.type === 'step') contentHtml += renderStep(section);
-          if (section.type === 'image') contentHtml += renderImageSection(section);
-          if (section.type === 'banner') contentHtml += renderBanner(section);
-      }
+    if (section.type === 'feature') {
+      featuresBuffer.push(section);
+    } else {
+      flushFeatures();
+      if (section.type === 'hero') contentHtml += renderHero(section);
+      if (section.type === 'step') contentHtml += renderStep(section);
+      if (section.type === 'image') contentHtml += renderImageSection(section);
+      if (section.type === 'banner') contentHtml += renderBanner(section);
+      if (section.type === 'quote') contentHtml += renderQuote(section);
+      if (section.type === 'stat') contentHtml += renderStat(section);
+      if (section.type === 'code') contentHtml += renderCode(section);
+      if (section.type === 'comparison') contentHtml += renderComparison(section);
+    }
   });
   flushFeatures();
 
