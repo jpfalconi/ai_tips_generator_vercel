@@ -274,7 +274,15 @@ const SectionEditor: React.FC<{
             <div className="flex items-center space-x-3 bg-white p-2 border rounded">
               {section.image && (
                 <div className="relative w-16 h-12 rounded overflow-hidden border">
-                  <img src={section.image} alt="Section" className="w-full h-full object-cover" />
+                  <img
+                    src={section.image}
+                    alt="Section"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop";
+                      e.currentTarget.onerror = null; // Prevent infinite loop
+                    }}
+                  />
                   <button
                     onClick={() => onUpdate(section.id, 'image', null)}
                     className="absolute top-0 right-0 bg-red-500 text-white p-0.5"
