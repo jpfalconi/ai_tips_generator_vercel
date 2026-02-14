@@ -190,7 +190,7 @@ const renderComparison = (section: Section) => {
           <!-- Pros -->
           <td width="48%" valign="top" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px;">
              <div style="font-weight: bold; color: #15803d; margin-bottom: 15px; font-family: Arial, sans-serif; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px;">
-               ✔ PRÓS
+               ✔ ${section.prosLabel || 'PRÓS'}
              </div>
              <table width="100%" cellpadding="0" cellspacing="0">
                 ${pros.map(item => `
@@ -206,7 +206,7 @@ const renderComparison = (section: Section) => {
           <!-- Cons -->
           <td width="48%" valign="top" style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 25px;">
              <div style="font-weight: bold; color: #b91c1c; margin-bottom: 15px; font-family: Arial, sans-serif; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid #fecaca; padding-bottom: 8px;">
-               ✖ CONTRAS
+               ✖ ${section.consLabel || 'CONTRAS'}
              </div>
              <table width="100%" cellpadding="0" cellspacing="0">
                 ${cons.map(item => `
