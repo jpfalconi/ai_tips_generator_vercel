@@ -25,6 +25,40 @@ const App: React.FC = () => {
   const [sharepointLink, setSharepointLink] = useState('');
   const [iframeHeight, setIframeHeight] = useState(2500);
 
+  // Sidebar Resize State
+  const [sidebarWidth, setSidebarWidth] = useState(450);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const startResizing = React.useCallback(() => {
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = React.useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = React.useCallback(
+    (mouseMoveEvent: MouseEvent) => {
+      if (isResizing) {
+        const newWidth = mouseMoveEvent.clientX;
+        if (newWidth > 300 && newWidth < 800) { // Min and Max width constraints
+          setSidebarWidth(newWidth);
+        }
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
+
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (token === PASSWORD_HASH) {
@@ -83,40 +117,6 @@ const App: React.FC = () => {
   if (!isAuthenticated) {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
   }
-
-  // Sidebar Resize State
-  const [sidebarWidth, setSidebarWidth] = useState(450);
-  const [isResizing, setIsResizing] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  const startResizing = React.useCallback(() => {
-    setIsResizing(true);
-  }, []);
-
-  const stopResizing = React.useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  const resize = React.useCallback(
-    (mouseMoveEvent: MouseEvent) => {
-      if (isResizing) {
-        const newWidth = mouseMoveEvent.clientX;
-        if (newWidth > 300 && newWidth < 800) { // Min and Max width constraints
-          setSidebarWidth(newWidth);
-        }
-      }
-    },
-    [isResizing]
-  );
-
-  useEffect(() => {
-    window.addEventListener("mousemove", resize);
-    window.addEventListener("mouseup", stopResizing);
-    return () => {
-      window.removeEventListener("mousemove", resize);
-      window.removeEventListener("mouseup", stopResizing);
-    };
-  }, [resize, stopResizing]);
 
   return (
     <div className="flex h-screen bg-falconi-gray overflow-hidden font-sans">
