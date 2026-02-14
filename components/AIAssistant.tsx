@@ -85,7 +85,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
         <div className="p-6 flex-1 flex flex-col min-h-0 bg-gray-50">
           <textarea
             className="w-full flex-1 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-falconi-primary focus:border-falconi-primary resize-none text-gray-700 text-sm leading-relaxed mb-4 shadow-inner custom-scrollbar"
-            placeholder="Ex: Como usar o Copilot no Excel. (A IA irá pesquisar, estruturar um guia completo e gerar imagens automaticamente para você)"
+            placeholder="Ex: Guia sobre ChatGPT vs Copilot. (A IA irá pesquisar, criar comparativos, métricas, citações e gerar imagens automaticamente para você)"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             disabled={loading}
@@ -118,7 +118,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  Gerando e Pesquisando...
+                  Criando Estratégia e Imagens...
                 </>
               ) : (
                 <>
