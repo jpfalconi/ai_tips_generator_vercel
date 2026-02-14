@@ -45,7 +45,7 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
       contents: `
@@ -87,5 +87,35 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
   } catch (error) {
     console.error("Error generating content:", error);
     throw error;
+  }
+};
+
+export const generateImagePrompt = async (context: string): Promise<string> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key missing");
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: `
+        Create a vivid, descriptive, high-quality image prompt in English based on the following context.
+        The prompt will be used by an AI image generator (like Midjourney/DALL-E).
+        
+        Context: "${context}"
+        
+        Requirements:
+        - Output ONLY the prompt string.
+        - Be specific about visual elements, lighting, and style.
+        - Style: Corporate, modern, professional, photorealistic, high resolution.
+        - No text overlay description.
+        - Max 150 characters.
+      `,
+    });
+
+    return response.text?.trim() || "modern corporate abstract background";
+  } catch (error) {
+    console.error("Error generating image prompt:", error);
+    return "modern corporate office technology";
   }
 };
