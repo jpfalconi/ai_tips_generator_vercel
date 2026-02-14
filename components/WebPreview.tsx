@@ -272,7 +272,7 @@ const ComparisonSection: React.FC<{ section: Section }> = ({ section }) => {
         {/* Pros */}
         <div className="bg-green-50 rounded-lg p-6 border border-green-100">
           <div className="flex items-center gap-2 mb-4 text-green-700 font-bold uppercase tracking-wider text-sm border-b border-green-200 pb-2">
-            <Icons.ThumbsUp size={18} /> Prós (Vantagens)
+            <Icons.ThumbsUp size={18} /> {section.prosLabel || 'PRÓS (VANTAGENS)'}
           </div>
           <ul className="space-y-3">
             {pros.map((item, i) => (
@@ -287,7 +287,7 @@ const ComparisonSection: React.FC<{ section: Section }> = ({ section }) => {
         {/* Cons */}
         <div className="bg-red-50 rounded-lg p-6 border border-red-100">
           <div className="flex items-center gap-2 mb-4 text-red-700 font-bold uppercase tracking-wider text-sm border-b border-red-200 pb-2">
-            <Icons.ThumbsDown size={18} /> Contras (Pontos de Atenção)
+            <Icons.ThumbsDown size={18} /> {section.consLabel || 'CONTRAS (PONTOS DE ATENÇÃO)'}
           </div>
           <ul className="space-y-3">
             {cons.map((item, i) => (

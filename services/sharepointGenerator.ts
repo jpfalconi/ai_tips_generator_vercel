@@ -197,7 +197,7 @@ const renderComparison = (section: Section) => {
       <!-- Pros -->
       <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 20px;">
          <div style="font-weight: bold; color: #15803d; margin-bottom: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-           <span>✔</span> PRÓS
+           <span>✔</span> ${section.prosLabel || 'PRÓS'}
          </div>
          <ul style="list-style: none; padding: 0; margin: 0;">
             ${pros.map(item => `
@@ -211,7 +211,7 @@ const renderComparison = (section: Section) => {
       <!-- Cons -->
       <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; padding: 20px;">
          <div style="font-weight: bold; color: #b91c1c; margin-bottom: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #fecaca; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-           <span>✖</span> CONTRAS
+           <span>✖</span> ${section.consLabel || 'CONTRAS'}
          </div>
          <ul style="list-style: none; padding: 0; margin: 0;">
             ${cons.map(item => `

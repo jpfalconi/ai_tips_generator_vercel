@@ -23,6 +23,8 @@ export interface Section {
   statLabel?: string; // For Stat type (e.g. "Time Reduction")
   prosList?: string; // Newline separated for Comparison
   consList?: string; // Newline separated for Comparison
+  prosLabel?: string; // Optional label for Pros
+  consLabel?: string; // Optional label for Cons
 }
 
 export interface ContentData {

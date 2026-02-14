@@ -325,6 +325,20 @@ const SectionEditor: React.FC<{
         {/* Fields specific to Comparison */}
         {section.type === 'comparison' && (
           <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              placeholder="Rótulo Positivo (Padrão: PRÓS)"
+              value={section.prosLabel || ''}
+              onChange={(e) => onUpdate(section.id, 'prosLabel', e.target.value)}
+              className="w-full p-2 border border-green-200 bg-green-50 rounded text-sm text-green-800 font-bold placeholder-green-300"
+            />
+            <input
+              type="text"
+              placeholder="Rótulo Negativo (Padrão: CONTRAS)"
+              value={section.consLabel || ''}
+              onChange={(e) => onUpdate(section.id, 'consLabel', e.target.value)}
+              className="w-full p-2 border border-red-200 bg-red-50 rounded text-sm text-red-800 font-bold placeholder-red-300"
+            />
             <textarea
               placeholder="Pros (um por linha)"
               value={section.prosList || ''}
