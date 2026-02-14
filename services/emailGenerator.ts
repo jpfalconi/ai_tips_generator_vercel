@@ -379,10 +379,10 @@ export const generateEML = (data: ContentData): string => {
 
   // The 'X-Unsent: 1' header tells Outlook to open this as a Draft (Compose mode)
   // instead of a received message.
-  return `To:
-  Subject: ${data.headerSubtitle}
-  X - Unsent: 1
-  Content - Type: text / html; charset = "utf-8"
+  return `To: 
+Subject: ${data.headerSubtitle}
+X-Unsent: 1
+Content-Type: text/html; charset="utf-8"
 
-${html} `;
+${html}`;
 };
