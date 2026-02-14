@@ -134,6 +134,10 @@ const SectionEditor: React.FC<{
             <option value="step">Passo-a-Passo (Com Prompt)</option>
             <option value="image">Imagem (Simples)</option>
             <option value="banner">Banner Aviso</option>
+            <option value="code">Código / Prompt</option>
+            <option value="quote">Citação</option>
+            <option value="stat">Métrica (Stat)</option>
+            <option value="comparison">Comparativo (Pros/Cons)</option>
           </select>
         </div>
         <div className="flex items-center gap-1">
@@ -263,6 +267,70 @@ const SectionEditor: React.FC<{
               <option key={icon} value={icon}>{label}</option>
             ))}
           </select>
+        )}
+
+        {/* Fields specific to Code */}
+        {section.type === 'code' && (
+          <div className="grid grid-cols-1 gap-2">
+            <input
+              type="text"
+              placeholder="Linguagem (ex: python, javascript, sql)"
+              value={section.codeLanguage || ''}
+              onChange={(e) => onUpdate(section.id, 'codeLanguage', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm font-mono"
+            />
+          </div>
+        )}
+
+        {/* Fields specific to Quote */}
+        {section.type === 'quote' && (
+          <div className="grid grid-cols-1 gap-2">
+            <input
+              type="text"
+              placeholder="Autor da Citação (ex: Vicente Falconi)"
+              value={section.author || ''}
+              onChange={(e) => onUpdate(section.id, 'author', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+        )}
+
+        {/* Fields specific to Stat */}
+        {section.type === 'stat' && (
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              placeholder="Valor (ex: 40%)"
+              value={section.statValue || ''}
+              onChange={(e) => onUpdate(section.id, 'statValue', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm font-bold"
+            />
+            <input
+              type="text"
+              placeholder="Rótulo (ex: Redução de Tempo)"
+              value={section.statLabel || ''}
+              onChange={(e) => onUpdate(section.id, 'statLabel', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm"
+            />
+          </div>
+        )}
+
+        {/* Fields specific to Comparison */}
+        {section.type === 'comparison' && (
+          <div className="grid grid-cols-2 gap-2">
+            <textarea
+              placeholder="Pros (um por linha)"
+              value={section.prosList || ''}
+              onChange={(e) => onUpdate(section.id, 'prosList', e.target.value)}
+              className="w-full p-2 border border-green-200 bg-green-50 rounded text-sm h-24 resize-none"
+            />
+            <textarea
+              placeholder="Contras (um por linha)"
+              value={section.consList || ''}
+              onChange={(e) => onUpdate(section.id, 'consList', e.target.value)}
+              className="w-full p-2 border border-red-200 bg-red-50 rounded text-sm h-24 resize-none"
+            />
+          </div>
         )}
 
         {/* Fields specific to Image Section */}

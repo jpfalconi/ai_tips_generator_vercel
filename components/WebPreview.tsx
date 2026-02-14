@@ -198,6 +198,114 @@ const BannerSection: React.FC<{ section: Section }> = ({ section }) => {
   );
 };
 
+const CodeSection: React.FC<{ section: Section }> = ({ section }) => {
+  const [copied, setCopied] = React.useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(section.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-gray-900 rounded-lg p-6 mb-8 shadow-md relative group">
+      <div className="absolute top-4 right-4 flex gap-2">
+        {section.codeLanguage && (
+          <span className="text-xs text-gray-400 font-mono uppercase py-1 px-2 border border-gray-700 rounded">
+            {section.codeLanguage}
+          </span>
+        )}
+        <button onClick={handleCopy} className="text-gray-400 hover:text-white transition" title="Copiar">
+          {copied ? <Icons.Check size={16} /> : <Icons.Copy size={16} />}
+        </button>
+      </div>
+      {section.title && <h3 className="text-falconi-secondary font-bold mb-3 text-sm uppercase tracking-wider">{section.title}</h3>}
+      <pre className="font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap">
+        {section.content}
+      </pre>
+    </div>
+  );
+};
+
+const QuoteSection: React.FC<{ section: Section }> = ({ section }) => {
+  return (
+    <div className="border-l-4 border-falconi-secondary bg-gray-50 p-8 rounded-r-lg mb-8 shadow-sm">
+      <Icons.Quote className="text-falconi-primary/20 mb-4" size={40} />
+      <p className="text-xl md:text-2xl font-serif text-gray-800 italic mb-4 leading-relaxed">
+        "{section.content}"
+      </p>
+      {section.author && (
+        <div className="flex items-center gap-2">
+          <div className="h-px w-8 bg-falconi-primary"></div>
+          <span className="text-sm font-bold text-falconi-primary uppercase tracking-widest">{section.author}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const StatSection: React.FC<{ section: Section }> = ({ section }) => {
+  return (
+    <div className="bg-falconi-primary text-white p-8 rounded-lg mb-8 text-center shadow-lg relative overflow-hidden group">
+      <div className="absolute top-0 right-0 -mr-8 -mt-8 opacity-10 group-hover:opacity-20 transition">
+        <Icons.TrendingUp size={150} />
+      </div>
+      <div className="relative z-10">
+        <div className="text-5xl md:text-7xl font-bold mb-2 tracking-tighter text-falconi-secondary">
+          {section.statValue}
+        </div>
+        {section.statLabel && (
+          <div className="text-xl font-medium opacity-90">{section.statLabel}</div>
+        )}
+        {section.content && (
+          <p className="mt-4 text-sm opacity-75 max-w-lg mx-auto">{section.content}</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ComparisonSection: React.FC<{ section: Section }> = ({ section }) => {
+  const pros = section.prosList ? section.prosList.split('\n') : [];
+  const cons = section.consList ? section.consList.split('\n') : [];
+
+  return (
+    <div className="mb-8">
+      {section.title && <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">{section.title}</h2>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Pros */}
+        <div className="bg-green-50 rounded-lg p-6 border border-green-100">
+          <div className="flex items-center gap-2 mb-4 text-green-700 font-bold uppercase tracking-wider text-sm border-b border-green-200 pb-2">
+            <Icons.ThumbsUp size={18} /> Prós (Vantagens)
+          </div>
+          <ul className="space-y-3">
+            {pros.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-700 text-sm">
+                <Icons.CheckCircle className="text-green-600 mt-0.5" size={16} />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Cons */}
+        <div className="bg-red-50 rounded-lg p-6 border border-red-100">
+          <div className="flex items-center gap-2 mb-4 text-red-700 font-bold uppercase tracking-wider text-sm border-b border-red-200 pb-2">
+            <Icons.ThumbsDown size={18} /> Contras (Pontos de Atenção)
+          </div>
+          <ul className="space-y-3">
+            {cons.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-700 text-sm">
+                <Icons.XCircle className="text-red-600 mt-0.5" size={16} />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const WebPreview: React.FC<WebPreviewProps> = ({ data }) => {
   // Logic to group 'feature' sections into a grid
   const renderSections = () => {
@@ -228,6 +336,14 @@ const WebPreview: React.FC<WebPreviewProps> = ({ data }) => {
           nodes.push(<ImageSection key={section.id} section={section} />);
         } else if (section.type === 'banner') {
           nodes.push(<BannerSection key={section.id} section={section} />);
+        } else if (section.type === 'code') {
+          nodes.push(<CodeSection key={section.id} section={section} />);
+        } else if (section.type === 'quote') {
+          nodes.push(<QuoteSection key={section.id} section={section} />);
+        } else if (section.type === 'stat') {
+          nodes.push(<StatSection key={section.id} section={section} />);
+        } else if (section.type === 'comparison') {
+          nodes.push(<ComparisonSection key={section.id} section={section} />);
         }
       }
     });

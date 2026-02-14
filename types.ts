@@ -1,4 +1,4 @@
-export type SectionType = 'hero' | 'feature' | 'step' | 'banner' | 'image';
+export type SectionType = 'hero' | 'feature' | 'step' | 'banner' | 'image' | 'code' | 'quote' | 'stat' | 'comparison';
 
 export interface Section {
   id: string;
@@ -15,6 +15,14 @@ export interface Section {
   listItems?: string; // Newline separated for Step type
   imageSize?: 'small' | 'medium' | 'large'; // For Image type
   cardSize?: 'small' | 'medium' | 'large'; // For Feature type
+
+  // Fields for Advanced Types
+  codeLanguage?: string; // For Code type
+  author?: string; // For Quote type
+  statValue?: string; // For Stat type (e.g. "40%")
+  statLabel?: string; // For Stat type (e.g. "Time Reduction")
+  prosList?: string; // Newline separated for Comparison
+  consList?: string; // Newline separated for Comparison
 }
 
 export interface ContentData {

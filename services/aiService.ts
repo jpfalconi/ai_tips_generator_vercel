@@ -17,7 +17,7 @@ const contentSchema: Schema = {
         type: Type.OBJECT,
         properties: {
           id: { type: Type.STRING },
-          type: { type: Type.STRING, enum: ["hero", "feature", "step", "banner", "image"] },
+          type: { type: Type.STRING, enum: ["hero", "feature", "step", "banner", "image", "code", "quote", "stat", "comparison"] },
           title: { type: Type.STRING },
           content: { type: Type.STRING },
           image: { type: Type.STRING, nullable: true },
@@ -27,7 +27,15 @@ const contentSchema: Schema = {
           ctaLink: { type: Type.STRING, nullable: true },
           promptSuggestion: { type: Type.STRING, nullable: true },
           listItems: { type: Type.STRING, nullable: true, description: "Newline separated list items" },
-          imageSize: { type: Type.STRING, enum: ["small", "medium", "large"], nullable: true }
+          imageSize: { type: Type.STRING, enum: ["small", "medium", "large"], nullable: true },
+
+          // New fields for Advanced Types
+          codeLanguage: { type: Type.STRING, nullable: true, description: "Language for code blocks (e.g., python, sql)" },
+          author: { type: Type.STRING, nullable: true, description: "Author for quotes" },
+          statValue: { type: Type.STRING, nullable: true, description: "Big number for stats (e.g. 40%)" },
+          statLabel: { type: Type.STRING, nullable: true, description: "Label for stats (e.g. Efficiency Gain)" },
+          prosList: { type: Type.STRING, nullable: true, description: "Newline separated pros" },
+          consList: { type: Type.STRING, nullable: true, description: "Newline separated cons" }
         },
         required: ["id", "type", "title", "content"]
       }
@@ -60,6 +68,11 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
            - **Header:** Catchy, professional title.
            - **Hero Section:** Introduction that hooks the reader, explaining WHY this topic matters now.
            - **Feature Sections:** 2-3 key benefits, pillars, or statistics. Use diverse icons.
+           - **Smart Sections (Use at least 1-2 of these):**
+             - **Stat Highlight:** If there's a key ROI or metric (e.g. "40% Time Saved"), use 'stat' type.
+             - **Quote:** If there's a relevant principle or quote, use 'quote' type.
+             - **Comparison:** If comparing tools or approaches (e.g. Free vs Paid), use 'comparison' type.
+             - **Code/Prompt:** If giving instructions for AI, ALWAYS provide the exact prompt in a 'code' section.
            - **Step-by-Step:** A detailed, practical "How-To" section. 
              - **CRITICAL:** You MUST populate the 'listItems' field with newline-separated steps. Do NOT put the steps in the 'content' field.
              - Example: "Open Excel\\nClick Data\\nSelect Copilot"
