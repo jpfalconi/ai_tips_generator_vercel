@@ -95,8 +95,12 @@ const ImageSection: React.FC<{ section: Section }> = ({ section }) => {
 };
 
 const FeatureCard: React.FC<{ section: Section }> = ({ section }) => {
+  let colSpan = 'col-span-1';
+  if (section.cardSize === 'medium') colSpan = 'md:col-span-2';
+  if (section.cardSize === 'large') colSpan = 'md:col-span-2 lg:col-span-3';
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-full hover:shadow-md transition">
+    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-full hover:shadow-md transition ${colSpan}`}>
       <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded bg-falconi-gray text-falconi-primary">
         <DynamicIcon name={section.icon} className="w-6 h-6" />
       </div>

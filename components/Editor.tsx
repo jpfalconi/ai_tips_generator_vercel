@@ -193,24 +193,61 @@ const SectionEditor: React.FC<{
 
         {/* Fields specific to Feature */}
         {section.type === 'feature' && (
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              value={section.icon || ''}
-              onChange={(e) => onUpdate(section.id, 'icon', e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded text-sm"
-            >
-              <option value="">Selecione um Ícone</option>
-              {Object.entries(ICONS_MAP).map(([icon, label]) => (
-                <option key={icon} value={icon}>{label}</option>
-              ))}
-            </select>
-            <input
-              type="text"
-              placeholder="Texto Link (Opcional)"
-              value={section.ctaText || ''}
-              onChange={(e) => onUpdate(section.id, 'ctaText', e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded text-sm"
-            />
+          <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-2">
+              <select
+                value={section.icon || ''}
+                onChange={(e) => onUpdate(section.id, 'icon', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded text-sm"
+              >
+                <option value="">Selecione um Ícone</option>
+                {Object.entries(ICONS_MAP).map(([icon, label]) => (
+                  <option key={icon} value={icon}>{label}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Texto Link (Opcional)"
+                value={section.ctaText || ''}
+                onChange={(e) => onUpdate(section.id, 'ctaText', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div className="p-2 bg-gray-50 rounded border border-gray-200">
+              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tamanho do Card</label>
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`cardSize-${section.id}`}
+                    checked={!section.cardSize || section.cardSize === 'small'}
+                    onChange={() => onUpdate(section.id, 'cardSize', 'small')}
+                    className="text-falconi-primary focus:ring-falconi-primary"
+                  />
+                  <span className="text-sm">Pequeno (1/3)</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`cardSize-${section.id}`}
+                    checked={section.cardSize === 'medium'}
+                    onChange={() => onUpdate(section.id, 'cardSize', 'medium')}
+                    className="text-falconi-primary focus:ring-falconi-primary"
+                  />
+                  <span className="text-sm">Médio (2/3)</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`cardSize-${section.id}`}
+                    checked={section.cardSize === 'large'}
+                    onChange={() => onUpdate(section.id, 'cardSize', 'large')}
+                    className="text-falconi-primary focus:ring-falconi-primary"
+                  />
+                  <span className="text-sm">Grande (Full)</span>
+                </label>
+              </div>
+            </div>
           </div>
         )}
 

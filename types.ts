@@ -14,19 +14,20 @@ export interface Section {
   promptSuggestion?: string; // For Step type
   listItems?: string; // Newline separated for Step type
   imageSize?: 'small' | 'medium' | 'large'; // For Image type
+  cardSize?: 'small' | 'medium' | 'large'; // For Feature type
 }
 
 export interface ContentData {
   headerTitle: string; // e.g. "FALCONI BRAND IDENTITY"
   headerSubtitle: string; // e.g. "Dicas de IA: Excelência Operacional"
-  
+
   // We keep these for email metadata but visual reliance moves to sections
   author: string;
   readTime: string;
-  
+
   // The main content is now a flexible list of sections
   sections: Section[];
-  
+
   // Global CTA (footer)
   footerCtaText: string;
   footerCtaLink: string;
