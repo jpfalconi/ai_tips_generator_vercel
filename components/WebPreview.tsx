@@ -28,18 +28,18 @@ const HeroSection: React.FC<{ section: Section }> = ({ section }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
       {section.image && (
-        <div className="h-64 w-full relative">
+        <div className="w-full relative">
           <img
             src={section.image}
             alt={section.title}
-            className="w-full h-full object-cover"
+            className="w-full h-auto block"
             onError={(e) => {
               e.currentTarget.src = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop";
               e.currentTarget.onerror = null;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-falconi-primary/60 to-transparent"></div>
-          <div className="absolute bottom-4 left-6 text-white text-2xl font-bold uppercase tracking-wider opacity-80">
+          <div className="absolute inset-0 bg-gradient-to-t from-falconi-primary/60 via-transparent to-transparent"></div>
+          <div className="absolute bottom-4 left-6 text-white text-2xl font-bold uppercase tracking-wider opacity-80 text-shadow-sm">
             Falconi AI
           </div>
         </div>
@@ -131,11 +131,11 @@ const StepSection: React.FC<{ section: Section }> = ({ section }) => {
       </div>
 
       {section.image && (
-        <div className="w-full h-64 overflow-hidden">
+        <div className="w-full overflow-hidden border-b border-gray-100">
           <img
             src={section.image}
             alt={section.title}
-            className="w-full h-full object-cover"
+            className="w-full h-auto block"
             onError={(e) => {
               e.currentTarget.src = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop";
               e.currentTarget.onerror = null;
