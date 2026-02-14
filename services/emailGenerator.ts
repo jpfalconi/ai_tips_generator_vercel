@@ -360,14 +360,14 @@ export const generateEmailHTML = (data: ContentData): string => {
               </p>
             </td>
           </tr>
-`;
-  </table>
-    </td>
+
+        </table>
+      </td>
     </tr>
-    </table>
-    </body>
-    </html>
-      `;
+  </table>
+</body>
+</html>
+  `;
 };
 
 /**
@@ -380,9 +380,9 @@ export const generateEML = (data: ContentData): string => {
   // The 'X-Unsent: 1' header tells Outlook to open this as a Draft (Compose mode)
   // instead of a received message.
   return `To:
-  Subject: ${ data.headerSubtitle }
+  Subject: ${data.headerSubtitle}
   X - Unsent: 1
   Content - Type: text / html; charset = "utf-8"
 
-${ html } `;
+${html} `;
 };
