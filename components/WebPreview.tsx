@@ -16,7 +16,7 @@ const DynamicIcon: React.FC<{ name?: string; className?: string }> = ({ name, cl
 const RichTextContent: React.FC<{ content: string, className?: string }> = ({ content, className }) => {
   return (
     <div
-      className={`${className} [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ul>li]:mb-1 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-falconi-primary [&>a]:underline [&>a:hover]:text-falconi-secondary`}
+      className={`${className} [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul>li]:mb-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-falconi-primary [&_a]:underline [&_a:hover]:text-falconi-secondary`}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   );
