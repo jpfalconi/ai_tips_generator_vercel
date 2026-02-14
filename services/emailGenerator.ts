@@ -52,7 +52,7 @@ const renderHero = (section: Section) => `
              <table cellpadding="0" cellspacing="0">
                <tr>
                  <td bgcolor="${COLORS.primary}" style="border-radius: 4px;" align="center">
-                   <a href="${section.ctaLink}" style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-family: Arial, sans-serif; font-weight: bold; font-size: 15px; border: 1px solid ${COLORS.primary}; border-radius: 4px;">${section.ctaText} &rarr;</a>
+                   <a href="${section.ctaLink}" style="display: inline-block; padding: 10px 20px; color: #ffffff; text-decoration: none; font-family: Arial, sans-serif; font-weight: bold; font-size: 14px; border: 1px solid ${COLORS.primary}; border-radius: 4px;">${section.ctaText} &rarr;</a>
                  </td>
                </tr>
              </table>
@@ -113,7 +113,7 @@ const renderBanner = (section: Section) => `
              !
            </div>
         </td>
-        <td style="padding: 25px 25px 25px 0; color: #ffffff; font-family: Arial, sans-serif;">
+        <td style="padding: 25px 25px 25px 15px; color: #ffffff; font-family: Arial, sans-serif;">
            <h3 style="margin: 0 0 5px 0; font-size: 18px; font-weight: bold; color: #ffffff;">${section.title}</h3>
            <div style="margin: 0; font-size: 15px; opacity: 0.9; line-height: 1.5; color: #ffffff;">${formatText(section.content)}</div>
         </td>
