@@ -60,7 +60,9 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
            - **Header:** Catchy, professional title.
            - **Hero Section:** Introduction that hooks the reader, explaining WHY this topic matters now.
            - **Feature Sections:** 2-3 key benefits, pillars, or statistics. Use diverse icons.
-           - **Step-by-Step:** A detailed, practical "How-To" section. If it's about software, give click-by-click instructions.
+           - **Step-by-Step:** A detailed, practical "How-To" section. 
+             - **CRITICAL:** You MUST populate the 'listItems' field with newline-separated steps. Do NOT put the steps in the 'content' field.
+             - Example: "Open Excel\\nClick Data\\nSelect Copilot"
            - **Conclusion/Banner:** A final pro-tip or call to action.
         3. **Tone:** Falconi (Excellence, Results-Oriented, Data-Driven).
         4. **Images:** The system will generate images later, so you don't need to provide URLs, but ensure the titles/content are descriptive enough for image generation.
@@ -92,9 +94,13 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
             const prompt = await generateImagePrompt(`Title: ${section.title}. Content: ${section.content || ''}`);
             // Use Pollinations with a seed to ensure stability/variety
             const seed = Math.floor(Math.random() * 10000);
-            imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&nologo=true`;
+            // Ensure the prompt is URL safe and not too long
+            const safePrompt = encodeURIComponent(prompt.substring(0, 100));
+            imageUrl = `https://image.pollinations.ai/prompt/${safePrompt}?seed=${seed}&nologo=true`;
           } catch (err) {
             console.warn(`Failed to generate image for section ${i}`, err);
+            // Fallback image if generation fails
+            imageUrl = `https://image.pollinations.ai/prompt/abstract%20technology?seed=${Date.now()}&nologo=true`;
           }
         }
 
@@ -135,7 +141,8 @@ export const generateImagePrompt = async (context: string): Promise<string> => {
         - Be specific about visual elements, lighting, and style.
         - Style: Corporate, modern, professional, photorealistic, high resolution.
         - No text overlay description.
-        - Max 150 characters.
+        - Max 100 characters.
+        - Avoid complex characters that break URLs.
       `,
     });
 
