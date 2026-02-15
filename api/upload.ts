@@ -4,7 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 export const config = {
     runtime: 'nodejs',
     api: {
-        bodyParser: false, // Disabling parsing allows us to consume the request as a stream
+        bodyParser: false,
     },
 };
 
@@ -21,19 +21,20 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
     try {
         const token = process.env.BLOB_READ_WRITE_TOKEN;
+        console.log('Token check:', token ? `Present (${token.substring(0, 10)}...)` : 'Missing');
+
         if (!token) {
             throw new Error('BLOB_READ_WRITE_TOKEN is missing');
         }
 
-        // With bodyParser disabled, 'request' is a raw Readable stream.
-        // @vercel/blob 'put' accepts a Readable stream.
-        // We pass the stream directly for efficient upload.
+        // Manually consume the stream to a Buffer to avoid stream compatibility issues
+        const chunks: Uint8Array[] = [];
+        for await (const chunk of request) {
+            chunks.push(chunk);
+        }
+        const buffer = Buffer.concat(chunks);
 
-        // Note: When bodyParser is false, request is a stream.
-        // However, the types for VercelRequest might not perfectly reflect this in all TS configs.
-        // Casting to any or check if it is compatible with PutCommandOptions['data']
-
-        const blob = await put(filename, request, {
+        const blob = await put(filename, buffer, {
             access: 'public',
             token: token,
             contentType: request.headers['content-type'] || 'image/png'
