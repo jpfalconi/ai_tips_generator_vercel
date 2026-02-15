@@ -1,22 +1,19 @@
 import { put } from '@vercel/blob';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const config = {
-    runtime: 'edge', // Using Edge runtime for better performance and potential Blob compatibility
+    runtime: 'nodejs',
 };
 
-export default async function handler(request: Request) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
     if (request.method !== 'POST') {
-        return new Response('Method Not Allowed', { status: 405 });
+        return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const url = new URL(request.url);
-    const filename = url.searchParams.get('filename');
+    const filename = request.query.filename as string;
 
     if (!filename) {
-        return new Response(JSON.stringify({ error: 'Filename is required' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return response.status(400).json({ error: 'Filename is required' });
     }
 
     try {
@@ -25,22 +22,21 @@ export default async function handler(request: Request) {
             throw new Error('BLOB_READ_WRITE_TOKEN is missing');
         }
 
-        // Edge runtime receives the body directly in the request stream
+        // Capture the raw body. 
+        // In Vercel Node.js functions, `request.body` is usually already parsed if JSON.
+        // For binary/image uploads, passing `request.body` directly to `put` works 
+        // if the client sends the binary data as the body.
+
         const blob = await put(filename, request.body, {
             access: 'public',
             token: token,
+            contentType: request.headers['content-type'] || 'image/png'
         });
 
-        return new Response(JSON.stringify(blob), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return response.status(200).json(blob);
     } catch (error) {
         console.error('Error uploading to Vercel Blob:', error);
         const message = error instanceof Error ? error.message : 'Unknown error';
-        return new Response(JSON.stringify({ error: `Failed to upload image: ${message}` }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return response.status(500).json({ error: `Failed to upload image: ${message}` });
     }
 }
