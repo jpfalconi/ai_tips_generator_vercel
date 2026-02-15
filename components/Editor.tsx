@@ -519,8 +519,14 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
-          throw new Error(errorData.error || 'Upload failed');
+          const errorText = await response.text();
+          console.error('Upload failed with status:', response.status, 'Response:', errorText);
+          try {
+            const errorData = JSON.parse(errorText);
+            throw new Error(errorData.error || `Upload failed: ${response.statusText}`);
+          } catch {
+            throw new Error(`Upload failed (${response.status}): ${errorText.substring(0, 50)}...`);
+          }
         }
 
         const newBlob = await response.json();
