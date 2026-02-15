@@ -3,6 +3,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const config = {
     runtime: 'nodejs',
+    api: {
+        bodyParser: false, // Disabling parsing allows us to consume the request as a stream
+    },
 };
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
@@ -22,12 +25,15 @@ export default async function handler(request: VercelRequest, response: VercelRe
             throw new Error('BLOB_READ_WRITE_TOKEN is missing');
         }
 
-        // Capture the raw body. 
-        // In Vercel Node.js functions, `request.body` is usually already parsed if JSON.
-        // For binary/image uploads, passing `request.body` directly to `put` works 
-        // if the client sends the binary data as the body.
+        // With bodyParser disabled, 'request' is a raw Readable stream.
+        // @vercel/blob 'put' accepts a Readable stream.
+        // We pass the stream directly for efficient upload.
 
-        const blob = await put(filename, request.body, {
+        // Note: When bodyParser is false, request is a stream.
+        // However, the types for VercelRequest might not perfectly reflect this in all TS configs.
+        // Casting to any or check if it is compatible with PutCommandOptions['data']
+
+        const blob = await put(filename, request, {
             access: 'public',
             token: token,
             contentType: request.headers['content-type'] || 'image/png'
