@@ -501,11 +501,34 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
     handleChange('sections', newSections);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, sectionId: string) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sectionId: string) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      handleSectionChange(sectionId, 'image', url);
+      // Optimistic update with local blob for immediate feedback
+      const localUrl = URL.createObjectURL(file);
+      handleSectionChange(sectionId, 'image', localUrl);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file); // API expects body, but we'll send raw body in fetch
+
+        // Upload to Vercel Blob via our API route
+        const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+          method: 'POST',
+          body: file,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const newBlob = await response.json();
+        // Update with the permanent public URL
+        handleSectionChange(sectionId, 'image', newBlob.url);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Erro ao fazer upload da imagem. Usando versão local (não funcionará em e-mails externos).');
+      }
     }
   };
 
