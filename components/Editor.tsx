@@ -519,7 +519,8 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
         });
 
         if (!response.ok) {
-          throw new Error('Upload failed');
+          const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
+          throw new Error(errorData.error || 'Upload failed');
         }
 
         const newBlob = await response.json();
@@ -527,7 +528,8 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
         handleSectionChange(sectionId, 'image', newBlob.url);
       } catch (error) {
         console.error('Error uploading image:', error);
-        alert('Erro ao fazer upload da imagem. Usando versão local (não funcionará em e-mails externos).');
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        alert(`Erro ao fazer upload da imagem: ${errorMessage}. Usando versão local (não funcionará em e-mails externos).`);
       }
     }
   };
