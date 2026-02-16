@@ -1,0 +1,7 @@
+[dotenv@17.3.1] injecting env (19) from .env.local -- tip: ­ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+
+­ƒôä Lendo arquivo: Materiais/copilot.aspx
+
+Ô£à Sucesso! Dica importada.
+­ƒåö ID: 4
+­ƒôî T├¡tulo: S├®rie #1: Domine o Resumo Personalizado e o Facilitator no Microsoft Teams

@@ -31,6 +31,17 @@ export default async function handler(request: VercelRequest, response: VercelRe
             return response.status(201).json({ tip: rows[0] });
         }
 
+        if (request.method === 'DELETE') {
+            const { id } = request.query;
+
+            if (!id) {
+                return response.status(400).json({ error: 'ID is required' });
+            }
+
+            await sql`DELETE FROM tips WHERE id = ${id as string}`;
+            return response.status(200).json({ message: 'Tip deleted successfully' });
+        }
+
         return response.status(405).json({ error: 'Method Not Allowed' });
     } catch (error) {
         console.error('Database error:', error);

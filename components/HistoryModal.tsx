@@ -40,6 +40,22 @@ export default function HistoryModal({ isOpen, onClose, onSelect }: HistoryModal
         }
     };
 
+    const deleteTip = async (id: number, e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent triggering selection
+        if (!confirm('Tem certeza que deseja excluir esta dica do histórico?')) return;
+
+        try {
+            const res = await fetch(`/api/tips?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setTips(tips.filter(t => t.id !== id));
+            } else {
+                alert('Erro ao excluir dica.');
+            }
+        } catch (error) {
+            console.error('Error deleting tip:', error);
+        }
+    };
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('pt-BR', {
             day: '2-digit',
@@ -91,8 +107,17 @@ export default function HistoryModal({ isOpen, onClose, onSelect }: HistoryModal
                                             {formatDate(tip.created_at)}
                                         </p>
                                     </div>
-                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-falconi-primary text-white text-xs rounded-full font-bold">
-                                        Carregar
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => deleteTip(tip.id, e)}
+                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                            title="Excluir"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-falconi-primary text-white text-xs rounded-full font-bold">
+                                            Carregar
+                                        </div>
                                     </div>
                                 </div>
                             ))}
