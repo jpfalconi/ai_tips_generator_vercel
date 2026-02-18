@@ -96,8 +96,8 @@ const App: React.FC = () => {
 
   const downloadASPX = () => {
     const htmlContent = generateSharePointHTML(data);
-    // Add BOM (\uFEFF) to strictly enforce UTF-8 in Microsoft products (SharePoint, Excel, etc.)
-    const blob = new Blob(['\uFEFF' + htmlContent], { type: 'text/html;charset=utf-8' });
+    // BOM removed to fix SharePoint forcing download. Meta charset handles encoding.
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
