@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ContentData } from "../types";
+import { FALCONI_SYSTEM_PROMPT } from "../falconiTone";
 
 // Schema definition remains the same
 const contentSchema: Schema = {
@@ -58,32 +59,34 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
       contents: `
-        You are an expert Content Strategist and Researcher for Falconi.
-        
-        GOAL: Transform the user's input (which might be just a topic) into a COMPREHENSIVE, PROFESSIONAL, and ACTIONABLE guide/newsletter.
-        
-        INSTRUCTIONS:
-        1. **Research & Expand:** DO NOT just format the input. Validate the topic, "search" your internal knowledge base for best practices, statistics, and actionable steps related to the topic.
-        2. **Structure:**
-           - **Header:** Catchy, professional title.
-           - **Hero Section:** Introduction that hooks the reader, explaining WHY this topic matters now.
-           - **Feature Sections:** 2-3 key benefits, pillars, or statistics. Use diverse icons.
-           - **Smart Sections (Use at least 1-2 of these):**
-             - **Stat Highlight:** If there's a key ROI or metric (e.g. "40% Time Saved"), use 'stat' type.
-             - **Quote:** If there's a relevant principle or quote, use 'quote' type.
-             - **Comparison:** If comparing tools or approaches (e.g. Free vs Paid), use 'comparison' type.
-             - **Code/Prompt:** If giving instructions for AI, ALWAYS provide the exact prompt in a 'code' section.
-           - **Step-by-Step:** A detailed, practical "How-To" section. 
-             - **CRITICAL:** You MUST populate the 'listItems' field with newline-separated steps. Do NOT put the steps in the 'content' field.
-             - Example: "Open Excel\\nClick Data\\nSelect Copilot"
-           - **Conclusion/Banner:** A final pro-tip or call to action.
-        3. **Tone:** Falconi (Excellence, Results-Oriented, Data-Driven).
-        4. **Images:** The system will generate images later, so you don't need to provide URLs, but ensure the titles/content are descriptive enough for image generation.
-        
-        USER INPUT:
-        "${rawText}"
-        
-        OUTPUT FORMAT: JSON (strictly following the schema).
+${FALCONI_SYSTEM_PROMPT}
+
+## Task
+Transform the user's input into a COMPREHENSIVE, PROFESSIONAL, and ACTIONABLE newsletter/guide.
+All content must be in Brazilian Portuguese and strictly follow the Falconi brand voice defined above.
+
+## Content Structure Instructions
+1. **Research & Expand:** DO NOT just format the input. Enrich with best practices, statistics, and actionable steps.
+2. **Structure:**
+   - **Header:** Catchy, professional title reflecting Falconi's excellence standards.
+   - **Hero Section:** Hook the reader with WHY this matters for business performance.
+   - **Feature Sections:** 2-3 key benefits or pillars tied to measurable outcomes. Use diverse icons.
+   - **Smart Sections (Use at least 1-2 of these):**
+     - **Stat Highlight:** Key ROI or metric (e.g. "40% Ganho de Eficiência"), use 'stat' type.
+     - **Quote:** Relevant management principle or best practice insight, use 'quote' type.
+     - **Comparison:** Comparing tools or approaches (e.g. Free vs Paid), use 'comparison' type.
+     - **Code/Prompt:** If AI instructions are relevant, ALWAYS provide the exact prompt in a 'code' section.
+   - **Step-by-Step:** Practical "Como Fazer" section.
+     - **CRITICAL:** Populate 'listItems' with newline-separated steps. Do NOT put steps in 'content'.
+     - Example: "Abra o Excel\\nClique em Dados\\nSelecione Copilot"
+   - **Conclusion/Banner:** A final pro-tip or governance reminder.
+3. **Images:** The system generates images separately — ensure titles/content are descriptive enough.
+
+## User Input
+"${rawText}"
+
+## Output Format
+JSON strictly following the schema. All text in Brazilian Portuguese.
       `,
       config: {
         responseMimeType: "application/json",

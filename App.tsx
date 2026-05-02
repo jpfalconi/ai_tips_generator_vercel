@@ -7,7 +7,8 @@ import EmailPreview from './components/EmailPreview';
 import AIAssistant from './components/AIAssistant';
 import Login from './components/Login';
 import HistoryModal from './components/HistoryModal';
-import { Layout, Mail, Globe, Code, Copy, Check, Download, AppWindow, Sparkles, ChevronsUpDown, Save, History } from 'lucide-react';
+import TeamsPreview from './components/TeamsPreview';
+import { Layout, Mail, Globe, Code, Copy, Check, Download, AppWindow, Sparkles, ChevronsUpDown, Save, History, MessageSquare } from 'lucide-react';
 import { generateEmailHTML, generateEML } from './services/emailGenerator';
 import { generateSharePointHTML } from './services/sharepointGenerator';
 
@@ -242,6 +243,12 @@ const App: React.FC = () => {
                 <AppWindow size={16} /> SharePoint
               </button>
               <button
+                onClick={() => setActiveView('teams')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'teams' ? 'bg-white text-[#464EB8] shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <MessageSquare size={16} /> Teams
+              </button>
+              <button
                 onClick={() => setActiveView('export')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeView === 'export' ? 'bg-white text-falconi-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
               >
@@ -264,6 +271,7 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-y-auto relative bg-gray-100">
           {activeView === 'web-preview' && <WebPreview data={data} />}
           {activeView === 'email-preview' && <EmailPreview data={data} />}
+          {activeView === 'teams' && <TeamsPreview data={data} />}
 
           {activeView === 'sharepoint' && (
             <div className="p-8 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">

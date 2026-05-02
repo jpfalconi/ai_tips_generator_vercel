@@ -43,4 +43,40 @@ export interface ContentData {
   footerCtaLink: string;
 }
 
-export type ViewMode = 'edit' | 'web-preview' | 'email-preview' | 'sharepoint' | 'export';
+export type ViewMode = 'edit' | 'web-preview' | 'email-preview' | 'sharepoint' | 'export' | 'teams';
+
+export interface TeamsPost {
+  headline: string;
+  body: string;
+  bullets: string[];
+  cta: string;
+  ctaLink?: string;
+  hashtags: string[];
+  topic: string;
+  adaptiveCard?: AdaptiveCard;
+}
+
+export interface AdaptiveCard {
+  type: 'AdaptiveCard';
+  version: string;
+  body: AdaptiveCardElement[];
+  actions?: AdaptiveCardAction[];
+}
+
+export interface AdaptiveCardElement {
+  type: string;
+  text?: string;
+  size?: string;
+  weight?: string;
+  color?: string;
+  wrap?: boolean;
+  spacing?: string;
+  items?: AdaptiveCardElement[];
+  facts?: { title: string; value: string }[];
+}
+
+export interface AdaptiveCardAction {
+  type: string;
+  title: string;
+  url?: string;
+}
