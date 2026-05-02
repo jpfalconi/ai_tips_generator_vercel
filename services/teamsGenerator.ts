@@ -47,7 +47,7 @@ export const generateTeamsPost = async (input: string): Promise<TeamsPost | null
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3-pro-preview',
     contents: `
 ${FALCONI_SYSTEM_PROMPT}
 

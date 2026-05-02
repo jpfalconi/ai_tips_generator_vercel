@@ -52,7 +52,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, onGenerate }
       }
 
       msg = msg.replace(/\[.*?\]\s*/, '').trim();
-      setError(`Erro na API (gemini-2.0-flash): ${msg}`);
+      setError(`Erro na API (gemini-3-pro-preview): ${msg}`);
     } finally {
       setLoading(false);
     }

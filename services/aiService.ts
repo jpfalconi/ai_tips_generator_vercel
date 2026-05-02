@@ -57,7 +57,7 @@ export const generateBriefingFromText = async (rawText: string): Promise<Content
 
     // 1. Generate the Structure and Content
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-pro-preview',
       contents: `
 ${FALCONI_SYSTEM_PROMPT}
 
@@ -145,7 +145,7 @@ export const generateImagePrompt = async (context: string): Promise<string> => {
   try {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-pro-preview',
       contents: `
         Create a vivid, descriptive, high-quality image prompt in English based on the following context.
         The prompt will be used by an AI image generator (like Midjourney/DALL-E).
